@@ -3,6 +3,7 @@ classdef Calc
         BISECTION = 0;
         SECANT = 1;
         NEWTON = 2;
+        H = 10e-17
     end
     methods (Static)
         function printClassName()
@@ -46,6 +47,20 @@ classdef Calc
             root = (a+b)/2;
         end
 
+        function [root, iteractions] = newton(func, derivateFunc, x0, tol1, tol2)
+            iteractions = 0;
+            root = x0;
+            diffRoots = inf;
+            fx = inf;
+            while abs(fx) > tol1 && abs(diffRoots) > tol2
+                x0 = root;
+                fx = func(root);
+                root = root - fx/derivateFunc(root);
+                diffRoots = root - x0;
+                iteractions = iteractions + 1;
+            end
+        end
+
         function [root, iteractions] = secant(func, x0, x1, tol1, tol2)
             iteractions = 0;
             while abs(func(x1)) > tol1 && abs(x1 -x0) > tol2
@@ -57,6 +72,10 @@ classdef Calc
                 iteractions = iteractions + 1;
             end
             root = x1;
+        end
+
+        function ret = derivate(func, x) 
+            ret = (func(x + Calc.H) - func(x)) / Calc.H
         end
     end
 end
